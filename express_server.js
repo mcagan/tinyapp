@@ -6,6 +6,16 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs")
 
+function generateRandomString() {
+  let result = '';
+  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let charactersLength = characters.length;
+  for (let i = 0; i <= 5; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -43,15 +53,18 @@ app.listen(PORT, () => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  templateVars = {shortURL: shortURL, longURL: req.body};
+  res.render("urls_show", templateVars);         // Respond with 'Ok' (we will replace this)
 });
 
-function generateRandomString() {
-  let result = '';
-  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let charactersLength = characters.length;
-  for (let i = 0; i <= 5; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+app.get("/u/:shortURL", (req, res) => {
+  if (req.params.shortURL) {
+    const longURL = urlDatabase[req.params.shortURL];
+    res.redirect(longURL);
+  } else {
+    res.send("<html><body>URL not found</body></html>\n");
   }
-  return result;
-}
+});
+
