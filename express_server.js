@@ -22,15 +22,11 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect("urls_show");
 });
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.get("/urls", (req, res) => {
@@ -59,7 +55,7 @@ app.post("/urls", (req, res) => {
   res.render("urls_show", templateVars);         // Respond with 'Ok' (we will replace this)
 });
 
-app.get("/u/:shortURL", (req, res) => {
+app.get("/urls/:shortURL", (req, res) => {
   if (req.params.shortURL) {
     const longURL = urlDatabase[req.params.shortURL];
     res.redirect(longURL);
@@ -67,4 +63,10 @@ app.get("/u/:shortURL", (req, res) => {
     res.send("<html><body>URL not found</body></html>\n");
   }
 });
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  id = req.params.shortURL;
+  delete urlDatabase[id];
+  res.redirect("/urls");
+})
 
