@@ -21,6 +21,11 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const updateURL = (shortID, url) => {
+  urlDatabase[shortID] = url;
+  return true;
+}
+
 app.get("/", (req, res) => {
   res.redirect("urls_show");
 });
@@ -52,7 +57,7 @@ app.post("/urls", (req, res) => {
   shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   templateVars = {shortURL: shortURL, longURL: req.body};
-  res.render("urls_show", templateVars);         // Respond with 'Ok' (we will replace this)
+  res.render("urls_show", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -69,4 +74,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[id];
   res.redirect("/urls");
 })
+
+app.post("/urls/:shortURL", (req, res) => {
+  shortURL = req.params.shortURL;
+  updateURL(shortURL, req.body.longURL);
+  res.redirect("/urls");
+});
 
