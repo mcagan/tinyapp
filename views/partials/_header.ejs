@@ -10,19 +10,23 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if (username) { %>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <body>Logged in as: <%= username %></body>
-        <form method="POST" action="/logout">
-        <button type="logout" class="btn btn-outline-dark btn-sm">Logout</button></form>
+    <% if (currentUser) { %>
+      <div class="form-horizontal float-right">
+        <body>Logged in as: <%= currentUser.name %></body>
+        <span class="pull-right">
+          <form method="POST" action="/logout">
+            <button type="logout" class="btn btn-outline-dark btn-sm">Logout</button></form>
+          </span>
       </div>
-    </div>
     <% } else { %>
-    <form method="POST" action="/login">
-      <div class="form-group mb-2">
-        <input class="form-control-center" type="text" name="username" placeholder="username" style="width: 150px;">
+    <form method="GET" action="/login">
+      <div class="text-right">
         <button type="submit" class="btn btn-outline-dark btn-sm">Login</button>
+      </div>
+    </form>
+    <form method="GET" action="/register">
+      <div class="text-right">
+        <button type="submit" class="btn btn-outline-dark btn-sm">Register</button>
       </div>
     </form>
     <% } %>
