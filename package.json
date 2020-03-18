@@ -20,6 +20,7 @@
   "homepage": "https://github.com/mcagan/tinyapp#readme",
   "dependencies": {
     "body-parse": "^0.1.0",
+    "cookie-parser": "^1.4.5",
     "ejs": "^3.0.1",
     "express": "^4.17.1"
   },
