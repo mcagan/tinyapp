@@ -11,17 +11,17 @@ app.use(cookieParser());
 
 //Databases
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {shortURL: "b2xVn2", longURL: "http://www.lighthouselabs.ca", userId: "klf7kj"},
+  "9sm5xK": {shortURL: "9sm5xK", longURL: "http://www.google.com", userId: "jhk76b"}
 };
 
 const users = { 
-  "userRandomID": {
+  "klf7kj": {
     id: "userRandomID", 
     email: "user@example.com", 
     password: "purple-monkey-dinosaur"
   },
- "user2RandomID": {
+ "jhk76b": {
     id: "user2RandomID", 
     email: "user2@example.com", 
     password: "dishwasher-funk"
@@ -40,7 +40,7 @@ const generateRandomString = function() {
 }
 
 const updateURL = (shortID, url) => {
-  urlDatabase[shortID] = url;
+  urlDatabase[shortID].longURL = url;
   return true;
 };
 
@@ -70,6 +70,19 @@ const authenticateUser = (email, password) => {
   }
 };
 
+const addNewURL = (longURL, userId) => {
+  const shortURL = generateRandomString();
+  const newURLObj = {shortURL, longURL, userId};
+  urlDatabase[shortURL] = newURLObj;
+  return shortURL;
+};
+
+const urlsForUser = id => {
+  const newArray = Object.values(urlDatabase);
+  const result = newArray.filter(url => url.userId === id);
+  return result;
+}
+
 //Server setup
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -87,7 +100,8 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const userId = req.cookies['user_id'];
   const loggedInUser = users[userId];
-  let templateVars = { urls: urlDatabase, currentUser: loggedInUser };
+  const urls = urlsForUser(userId);
+  let templateVars = { urls, currentUser: loggedInUser };
   res.render("urls_index", templateVars);
 });
 
@@ -145,31 +159,34 @@ app.post("/logout", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies['user_id'];
   const loggedInUser = users[userId];
-  templateVars = { currentUser: loggedInUser }
-  res.render("urls_new", templateVars);
+  if (loggedInUser) {
+    templateVars = { currentUser: loggedInUser }
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   const userId = req.cookies['user_id'];
   const loggedInUser = users[userId];
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], currentUser: loggedInUser };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, currentUser: loggedInUser };
   res.render("urls_show", templateVars);
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
   const userId = req.cookies['user_id'];
   const loggedInUser = users[userId];
-  templateVars = {shortURL: shortURL, longURL: req.body, currentUser: loggedInUser};
+  const longURL = req.body.longURL;
+  const shortURL = addNewURL(longURL, userId);
+  templateVars = {shortURL, longURL, currentUser: loggedInUser};
   res.render("urls_show", templateVars);
 });
 
 //Redirect to longURL
 app.get("/u/:shortURL", (req, res) => {
   if (req.params.shortURL) {
-    const longURL = urlDatabase[req.params.shortURL];
+    const longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(longURL);
   } else {
     res.send("<html><body>URL not found</body></html>\n");
@@ -178,15 +195,25 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Delete
 app.post("/urls/:shortURL/delete", (req, res) => {
+  const userId = req.cookies['user_id'];
   id = req.params.shortURL;
-  delete urlDatabase[id];
+  if (urlDatabase[id].userId === userId) {
+    delete urlDatabase[id];
+  }
   res.redirect("/urls");
 })
 
 //Update
 app.post("/urls/:shortURL", (req, res) => {
   shortURL = req.params.shortURL;
-  updateURL(shortURL, req.body.longURL);
+  const userId = req.cookies['user_id'];
+  if (urlDatabase[shortURL].userId === userId) {
+    updateURL(shortURL, req.body.longURL);
+  }
   res.redirect("/urls");
+});
+
+app.get("/urlDatabase", (req, res) => {
+  res.json(urlDatabase);
 });
 

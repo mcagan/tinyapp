@@ -21,18 +21,22 @@
           <th scope="col">Delete</th>
         </tr>
       </thead>
+      <% if (!currentUser) {%>
+        <body> Please register to use TinyApp or login to see your URLs.</body>
+      <% } else { %>
       <tbody>
-        <% for(let url in urls) { %>
+        <% for(let url of urls) { %>
           <tr>
-            <td><%= url %></td>
-            <td><%= urls[url] %></td>
-            <td><form method="GET" action="/urls/<%= url %>">
+            <td><%= url.shortURL %></td>
+            <td><%= url.longURL %></td>
+            <td><form method="GET" action="/urls/<%= url.shortURL %>">
               <button id="edit" class="btn btn-outline-success btn-sm">Edit </button>
             </form></td>
-            <td><form method="POST" action="/urls/<%= url %>/delete">
+            <td><form method="POST" action="/urls/<%= url.shortURL %>/delete">
               <button id="delete" class="btn btn-outline-danger btn-sm">Delete </button>
             </form></td>
           </tr>
+        <% } %>
         <% } %>
       </tbody>
     </table>
