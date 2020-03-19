@@ -28,7 +28,8 @@
       <tbody>
         <% for(let url of urls) { %>
           <tr>
-            <td><%= url.shortURL %></td>
+            <td><form method="GET" action="/u/<%= url.shortURL %>">
+              <button id="link" class="btn btn-link"><%= url.shortURL %></button></form></td>
             <td><%= url.longURL %></td>
             <td><form method="GET" action="/urls/<%= url.shortURL %>">
               <button id="edit" class="btn btn-outline-success btn-sm">Edit </button>

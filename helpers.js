@@ -45,6 +45,9 @@ const authenticateUser = (email, password) => {
 
 const addNewURL = (longURL, userId) => {
   const shortURL = generateRandomString();
+  if (!longURL.startsWith("http")) {
+    longURL = "https://" + longURL;
+  }
   const newURLObj = {shortURL, longURL, userId};
   urlDatabase[shortURL] = newURLObj;
   return shortURL;
@@ -53,7 +56,6 @@ const addNewURL = (longURL, userId) => {
 const urlsForUser = id => {
   const newArray = Object.values(urlDatabase);
   const result = newArray.filter(url => url.userId === id);
-  console.log(result);
   return result;
 };
 

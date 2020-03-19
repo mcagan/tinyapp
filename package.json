@@ -20,8 +20,7 @@
   "homepage": "https://github.com/mcagan/tinyapp#readme",
   "dependencies": {
     "bcrypt": "2.0.0",
-    "body-parse": "^0.1.0",
-    "cookie-parser": "^1.4.5",
+    "body-parser": "^0.1.0",
     "cookie-session": "^1.4.0",
     "ejs": "^3.0.1",
     "express": "^4.17.1"
