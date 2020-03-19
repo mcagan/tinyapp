@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/mcagan/tinyapp#readme",
   "dependencies": {
+    "bcrypt": "2.0.0",
     "body-parse": "^0.1.0",
     "cookie-parser": "^1.4.5",
     "ejs": "^3.0.1",

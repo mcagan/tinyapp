@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -46,11 +47,12 @@ const updateURL = (shortID, url) => {
 
 const addNewUser = (name, email, password) => {
   const userId = generateRandomString();
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const newUserObj = {
     id: userId,
     name,
     email,
-    password
+    password: hashedPassword
   };
   users[userId] = newUserObj;
   return userId;
@@ -63,7 +65,7 @@ const findByEmail = email => {
 
 const authenticateUser = (email, password) => {
   let user = findByEmail(email);
-  if(user && user.password === password) {
+  if(user && bcrypt.compareSync(password, user.password)) {
     return user;
   } else {
     return false;
@@ -80,6 +82,7 @@ const addNewURL = (longURL, userId) => {
 const urlsForUser = id => {
   const newArray = Object.values(urlDatabase);
   const result = newArray.filter(url => url.userId === id);
+  console.log(result);
   return result;
 }
 
@@ -217,3 +220,6 @@ app.get("/urlDatabase", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get("/userDatabase", (req, res) => {
+  res.json(users);
+});
