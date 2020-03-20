@@ -34,7 +34,7 @@
             <td><form method="GET" action="/urls/<%= url.shortURL %>">
               <button id="edit" class="btn btn-outline-success btn-sm">Edit </button>
             </form></td>
-            <td><form method="POST" action="/urls/<%= url.shortURL %>/delete">
+            <td><form method="POST" action="/urls/<%= url.shortURL %>?_method=DELETE">
               <button id="delete" class="btn btn-outline-danger btn-sm">Delete </button>
             </form></td>
           </tr>

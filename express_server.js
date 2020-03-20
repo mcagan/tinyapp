@@ -4,6 +4,7 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+var methodOverride = require('method-override')
 const {updateURL, addNewUser, findByEmail, authenticateUser, addNewURL, urlsForUser} = require("./helpers");
 const {urlDatabase, users} = require("./databases");
 
@@ -14,6 +15,7 @@ app.use(cookieSession({
   name: 'session',
   keys: ['hbdLeo', 'hbdLuka'],
 }));
+app.use(methodOverride('_method'));
 
 //Server setup
 app.listen(PORT, () => {
@@ -144,7 +146,7 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 //Delete
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL", (req, res) => {
   const userId = req.session.user_id;
   const id = req.params.shortURL;
   if (urlDatabase[id].userId === userId) {
@@ -156,7 +158,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 //Update
-app.post("/urls/:shortURL", (req, res) => {
+app.put("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const userId = req.session.user_id;
   if (urlDatabase[shortURL].userId === userId) {
