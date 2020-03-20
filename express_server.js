@@ -24,7 +24,7 @@ app.listen(PORT, () => {
 app.get("/", (req, res) => {
   const userId = req.session.user_id;
   const loggedInUser = users[userId];
-  const urls = Object.values(urlDatabase)
+  const urls = Object.values(urlDatabase);
   let templateVars = { currentUser: loggedInUser, urls};
   res.render("homepage", templateVars);
 });
