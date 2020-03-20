@@ -22,9 +22,14 @@ app.listen(PORT, () => {
 
 //Main Page
 app.get("/", (req, res) => {
-  res.redirect("/urls");
+  const userId = req.session.user_id;
+  const loggedInUser = users[userId];
+  const urls = Object.values(urlDatabase)
+  let templateVars = { currentUser: loggedInUser, urls};
+  res.render("homepage", templateVars);
 });
 
+//MyURLs
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
   const loggedInUser = users[userId];
