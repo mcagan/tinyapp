@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 var methodOverride = require('method-override')
-const {updateURL, addNewUser, findByEmail, authenticateUser, addNewURL, urlsForUser} = require("./helpers");
+const {updateURL, addNewUser, findByEmail, authenticateUser, addNewURL, urlsForUser, totalVisits} = require("./helpers");
 const {urlDatabase, users} = require("./databases");
 
 
@@ -36,7 +36,7 @@ app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
   const loggedInUser = users[userId];
   const urls = urlsForUser(userId);
-  let templateVars = { urls, currentUser: loggedInUser };
+  let templateVars = { urls, currentUser: loggedInUser};
   res.render("urls_index", templateVars);
 });
 
@@ -115,7 +115,9 @@ app.get("/urls/:shortURL", (req, res) => {
   if (!urlDatabase[id]) {
     res.status(404).send("URL not found");
   }
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, currentUser: loggedInUser };
+  const uniqueVisits = (Object.keys(urlDatabase[id]["visits"]).length - 1) + urlDatabase[id]["visits"]["usersWithoutAccount"];
+  const totalVisit = totalVisits(shortURL);
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, currentUser: loggedInUser, uniqueVisits, totalVisit, dateCreated: urlDatabase[req.params.shortURL].createdOn};
   if (urlDatabase[id].userId === userId) {
     res.render("urls_show", templateVars);
   } else {
@@ -130,14 +132,28 @@ app.post("/urls", (req, res) => {
     res.send("Please log in to create a new URL");
   }
   const longURL = req.body.longURL;
-  const shortURL = addNewURL(longURL, userId);
-  let templateVars = {shortURL, longURL, currentUser: loggedInUser};
+  const shortURL = addNewURL(longURL, userId)
+  const uniqueVisits = (Object.keys(urlDatabase[shortURL]["visits"]).length - 1) + urlDatabase[shortURL]["visits"]["usersWithoutAccount"];
+  const totalVisit = totalVisits(shortURL);
+  let templateVars = {shortURL, longURL, currentUser: loggedInUser, uniqueVisits, totalVisit, dateCreated: urlDatabase[shortURL].createdOn};
   res.render("urls_show", templateVars);
 });
 
 //Redirect to longURL
 app.get("/u/:shortURL", (req, res) => {
-  if (req.params.shortURL) {
+  shortURL = req.params.shortURL;
+  const userId = req.session.user_id;
+  const loggedInUser = users[userId];
+  if (urlDatabase[shortURL]) {
+    if (loggedInUser) {
+      if(urlDatabase[shortURL]["visits"][userId]) {
+        urlDatabase[shortURL]["visits"][userId] += 1;
+      } else {
+        urlDatabase[shortURL]["visits"][userId] = 1;
+      }
+    } else {
+      urlDatabase[shortURL]["visits"]["usersWithoutAccount"] += 1;
+    }
     const longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(longURL);
   } else {

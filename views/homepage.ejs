@@ -17,6 +17,7 @@
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
+          <th scope="col">Created On</th>
         </tr>
       </thead>
      
@@ -26,6 +27,7 @@
             <td><form method="GET" action="/u/<%= url.shortURL %>">
               <button id="link" class="btn btn-link"><%= url.shortURL %></button></form></td>
             <td><%= url.longURL %></td>
+            <td><%= url.createdOn %></td>
           </tr>
           <% } %>
       </tbody>

@@ -48,7 +48,9 @@ const addNewURL = (longURL, userId) => {
   if (!longURL.startsWith("http")) {
     longURL = "https://" + longURL;
   }
-  const newURLObj = {shortURL, longURL, userId};
+  const dateCreated = new Date();
+  const dateString = dateCreated.toDateString()
+  const newURLObj = {shortURL, longURL, userId, visits: {usersWithoutAccount: 0}, createdOn: dateString};
   urlDatabase[shortURL] = newURLObj;
   return shortURL;
 };
@@ -59,4 +61,12 @@ const urlsForUser = id => {
   return result;
 };
 
-module.exports = {generateRandomString, updateURL, addNewUser, findByEmail, authenticateUser, addNewURL, urlsForUser};
+const totalVisits = shortURL => {
+  let total = 0;
+  for (let value in urlDatabase[shortURL]["visits"]) {
+    total += urlDatabase[shortURL]["visits"][value];
+  }
+  return total;
+}
+
+module.exports = {generateRandomString, updateURL, addNewUser, findByEmail, authenticateUser, addNewURL, urlsForUser, totalVisits};
