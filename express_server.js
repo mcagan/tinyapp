@@ -24,11 +24,7 @@ app.listen(PORT, () => {
 
 //Main Page
 app.get("/", (req, res) => {
-  const userId = req.session.user_id;
-  const loggedInUser = users[userId];
-  const urls = Object.values(urlDatabase);
-  let templateVars = { currentUser: loggedInUser, urls};
-  res.render("homepage", templateVars);
+  res.redirect("/urls");
 });
 
 //MyURLs
@@ -115,9 +111,15 @@ app.get("/urls/:shortURL", (req, res) => {
   if (!urlDatabase[id]) {
     res.status(404).send("URL not found");
   }
-  const uniqueVisits = (Object.keys(urlDatabase[id]["visits"]).length - 1) + urlDatabase[id]["visits"]["usersWithoutAccount"];
+  const uniqueVisits = (Object.keys(urlDatabase[id]["visits"]).length - 1) 
+  + urlDatabase[id]["visits"]["usersWithoutAccount"];
   const totalVisit = totalVisits(shortURL);
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, currentUser: loggedInUser, uniqueVisits, totalVisit, dateCreated: urlDatabase[req.params.shortURL].createdOn};
+  let templateVars = { shortURL: req.params.shortURL, 
+    longURL: urlDatabase[req.params.shortURL].longURL, 
+    currentUser: loggedInUser, 
+    uniqueVisits, 
+    totalVisit, 
+    dateCreated: urlDatabase[req.params.shortURL].createdOn};
   if (urlDatabase[id].userId === userId) {
     res.render("urls_show", templateVars);
   } else {
@@ -133,9 +135,15 @@ app.post("/urls", (req, res) => {
   }
   const longURL = req.body.longURL;
   const shortURL = addNewURL(longURL, userId)
-  const uniqueVisits = (Object.keys(urlDatabase[shortURL]["visits"]).length - 1) + urlDatabase[shortURL]["visits"]["usersWithoutAccount"];
+  const uniqueVisits = (Object.keys(urlDatabase[shortURL]["visits"]).length - 1) 
+  + urlDatabase[shortURL]["visits"]["usersWithoutAccount"];
   const totalVisit = totalVisits(shortURL);
-  let templateVars = {shortURL, longURL, currentUser: loggedInUser, uniqueVisits, totalVisit, dateCreated: urlDatabase[shortURL].createdOn};
+  let templateVars = {shortURL, 
+    longURL, 
+    currentUser: loggedInUser, 
+    uniqueVisits, 
+    totalVisit, 
+    dateCreated: urlDatabase[shortURL].createdOn};
   res.render("urls_show", templateVars);
 });
 

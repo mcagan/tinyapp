@@ -46,7 +46,7 @@ const authenticateUser = (email, password) => {
 const addNewURL = (longURL, userId) => {
   const shortURL = generateRandomString();
   if (!longURL.startsWith("http")) {
-    longURL = "https://" + longURL;
+    longURL = "http://" + longURL;
   }
   const dateCreated = new Date();
   const dateString = dateCreated.toDateString()
