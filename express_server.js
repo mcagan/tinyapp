@@ -17,11 +17,6 @@ app.use(cookieSession({
 }));
 app.use(methodOverride('_method'));
 
-//Server setup
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
 //Main Page
 app.get("/", (req, res) => {
   res.redirect("/urls");
@@ -189,4 +184,9 @@ app.put("/urls/:shortURL", (req, res) => {
     updateURL(shortURL, req.body.longURL);
   }
   res.redirect("/urls");
+});
+
+//Server setup
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
 });

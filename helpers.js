@@ -38,9 +38,8 @@ const authenticateUser = (email, password) => {
   let user = findByEmail(email, users);
   if (user && bcrypt.compareSync(password, user.password)) {
     return user;
-  } else {
-    return false;
-  }
+  } 
+  return false;
 };
 
 const addNewURL = (longURL, userId) => {
