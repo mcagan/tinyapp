@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
@@ -8,7 +7,7 @@ var methodOverride = require('method-override')
 const {updateURL, addNewUser, findByEmail, authenticateUser, addNewURL, urlsForUser, totalVisits} = require("./helpers");
 const {urlDatabase, users} = require("./databases");
 
-
+const PORT = 8080; // default port 8080
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(cookieSession({
