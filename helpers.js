@@ -51,6 +51,7 @@ const addNewURL = (longURL, userId) => {
   const dateString = dateCreated.toDateString()
   const newURLObj = {shortURL, longURL, userId, visits: {usersWithoutAccount: 0}, createdOn: dateString};
   urlDatabase[shortURL] = newURLObj;
+  console.log(newURLObj);
   return shortURL;
 };
 

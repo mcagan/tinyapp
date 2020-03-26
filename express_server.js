@@ -104,9 +104,15 @@ app.get("/urls/:shortURL", (req, res) => {
   const loggedInUser = users[userId];
   if (!urlDatabase[id]) {
     res.status(404).send("URL not found");
+    return false;
   }
-  const uniqueVisits = (Object.keys(urlDatabase[id]["visits"]).length - 1) 
-  + urlDatabase[id]["visits"]["usersWithoutAccount"];
+  let uniqueVisits = 0;
+  if (Object.keys(urlDatabase[id]["visits"]).length > 1) {
+    uniqueVisits = (Object.keys(urlDatabase[id]["visits"]).length - 1)
+    + urlDatabase[id]["visits"]["usersWithoutAccount"];
+  } else {
+    uniqueVisits = urlDatabase[id]["visits"]["usersWithoutAccount"];
+  }
   const totalVisit = totalVisits(id);
   let templateVars = { shortURL: req.params.shortURL, 
     longURL: urlDatabase[req.params.shortURL].longURL, 
