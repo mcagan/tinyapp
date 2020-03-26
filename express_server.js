@@ -107,7 +107,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
   const uniqueVisits = (Object.keys(urlDatabase[id]["visits"]).length - 1) 
   + urlDatabase[id]["visits"]["usersWithoutAccount"];
-  const totalVisit = totalVisits(shortURL);
+  const totalVisit = totalVisits(id);
   let templateVars = { shortURL: req.params.shortURL, 
     longURL: urlDatabase[req.params.shortURL].longURL, 
     currentUser: loggedInUser, 
@@ -156,7 +156,7 @@ app.get("/u/:shortURL", (req, res) => {
     } else {
       urlDatabase[shortURL]["visits"]["usersWithoutAccount"] += 1;
     }
-    const longURL = urlDatabase[req.params.shortURL].longURL;
+    const longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
   } else {
     res.send("<html><body>URL not found</body></html>\n");
